@@ -1,60 +1,40 @@
-const express = require('express');
-const axios = require('axios');
-const app = express();
-app.use(express.json());
+import React, { useState } from 'react';
+import axios from 'axios';
+import Home from './components/Home';
+import News from './components/News';
 
-const NEWS_API_KEY = 'YOUR_NEWSAPI_KEY';
-const GPT_API_KEY = 'YOUR_GPT_API_KEY';
+const App = () => {
+  const [articles, setArticles] = useState([]);
 
-// Fetch News from NewsAPI and summarize each article
-app.post('/api/fetch-news', async (req, res) => {
-  const { topics } = req.body;
-  try {
-    // Fetching articles based on selected topics
-    const newsRes = await axios.get(`https://newsapi.org/v2/everything?q=${topics.join(',')}&apiKey=${NEWS_API_KEY}`);
-    const articles = newsRes.data.articles;
+  const fetchNews = async (topics) => {
+    try {
+      const newsResponse = await axios.post('/api/fetch-news', { topics });
+      const fetchedArticles = newsResponse.data.articles;
 
-    // Summarizing each article using GPT API
-    const summarizedArticles = await Promise.all(articles.map(async (article) => {
-      try {
-        const gptRes = await axios.post(
-          'https://api.openai.com/v1/engines/davinci/completions',
-          {
-            prompt: `Summarize this article: ${article.content}`,
-            max_tokens: 100,
-            temperature: 0.7,
-          },
-          {
-            headers: {
-              'Authorization': `Bearer ${GPT_API_KEY}`,
-            },
-          }
-        );
+      const summarizedArticles = await Promise.all(
+        fetchedArticles.map(async (article) => {
+          const summaryResponse = await axios.post('/api/summarize', { articleContent: article.content });
+          return {
+            id: article.url,
+            title: article.title,
+            url: article.url,
+            summary: summaryResponse.data.summary,
+          };
+        })
+      );
+      setArticles(summarizedArticles);
+    } catch (error) {
+      console.error('Error fetching news or summarizing:', error);
+    }
+  };
 
-        const summary = gptRes.data.choices[0].text.trim();
+  return (
+    <div>
+      <Home fetchNews={fetchNews} />
+      <News articles={articles} />
+    </div>
+  );
+};
 
-        // Returning both original and summarized content
-        return {
-          id: article.url,
-          title: article.title,
-          url: article.url,
-          content: article.content,
-          summary,
-        };
-      } catch (error) {
-        console.error('Error summarizing article:', error);
-        return { ...article, summary: 'Error summarizing this article' };
-      }
-    }));
-
-    res.json({ articles: summarizedArticles });
-  } catch (error) {
-    console.error('Error fetching news:', error);
-    res.status(500).json({ message: 'Error fetching news', error });
-  }
-});
-
-app.listen(5000, () => {
-  console.log('Server running on port 5000');
-});
+export default App;
 
