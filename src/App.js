@@ -1,25 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import axios from 'axios';
+import Home from './components/Home';
+import News from './components/News';
 
-function App() {
+const App = () => {
+  const [articles, setArticles] = useState([]);
+
+  const fetchNews = async (topics) => {
+    try {
+      const newsResponse = await axios.post('/api/fetch-news', { topics });
+      const fetchedArticles = newsResponse.data.articles;
+
+      const summarizedArticles = await Promise.all(
+        fetchedArticles.map(async (article) => {
+          const summaryResponse = await axios.post('/api/summarize', { articleContent: article.content });
+          return {
+            id: article.url,
+            title: article.title,
+            url: article.url,
+            summary: summaryResponse.data.summary,
+          };
+        })
+      );
+      setArticles(summarizedArticles);
+    } catch (error) {
+      console.error('Error fetching news or summarizing:', error);
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Home fetchNews={fetchNews} />
+      <News articles={articles} />
     </div>
   );
-}
+};
 
 export default App;
+
