@@ -1,14 +1,13 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const News = ({ articles }) => {
   return (
     <div>
-      {articles.map((article) => (
+      {articles.map((article, index) => (
         <div key={article.id} className="news-article">
           <h3>{article.title}</h3>
-          <p><strong>Summary:</strong> {article.summary}</p>
-          <p><strong>Original Content:</strong> {article.content}</p>
-          <a href={article.url} target="_blank" rel="noopener noreferrer">Read Full Article</a>
+          <Link to={`/article/${index}`}>Read Full Article</Link>
         </div>
       ))}
     </div>

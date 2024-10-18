@@ -1,37 +1,30 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const Home = ({ fetchNews }) => {
-  const [selectedTopics, setSelectedTopics] = useState([]);
+const Home = ({ fetchNewsBySearch }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
 
-  const topics = ["Technology", "Business", "Health", "Sports", "Entertainment"];
-
-  const handleSelectTopic = (topic) => {
-    if (selectedTopics.includes(topic)) {
-      setSelectedTopics(selectedTopics.filter((t) => t !== topic));
-    } else {
-      setSelectedTopics([...selectedTopics, topic]);
+  const handleSearch = () => {
+    if (searchQuery.trim() !== '') {
+      fetchNewsBySearch(searchQuery);
+      navigate('/articles'); // Redirect to articles page after fetching
+      setSearchQuery(''); // Clear input after searching
     }
-  };
-
-  const handleFetchNews = () => {
-    fetchNews(selectedTopics);
   };
 
   return (
     <div>
-      <h2>Select Topics</h2>
+      <h2>Search for News</h2>
       <div>
-        {topics.map((topic) => (
-          <button
-            key={topic}
-            className={`topic-button ${selectedTopics.includes(topic) ? "selected" : ""}`}
-            onClick={() => handleSelectTopic(topic)}
-          >
-            {topic}
-          </button>
-        ))}
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Enter search query"
+        />
+        <button onClick={handleSearch}>Search</button>
       </div>
-      <button onClick={handleFetchNews}>Get News</button>
     </div>
   );
 };
