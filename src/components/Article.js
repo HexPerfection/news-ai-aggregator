@@ -20,7 +20,7 @@ const Article = () => {
           content: article.content, // Pass the article content to summarize
         });
 
-        setSummary(summaryResponse.data.summary); // Set the summary
+        setSummary(summaryResponse.data); // Set the summary
 
       } catch (error) {
         setError('Error fetching or summarizing article. Please try again later.');
