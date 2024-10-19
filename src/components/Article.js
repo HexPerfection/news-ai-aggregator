@@ -1,6 +1,7 @@
 import { React, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import "../styles.css";
 
 const Article = () => {
   const location = useLocation();
@@ -41,18 +42,20 @@ const Article = () => {
   }
 
   return (
-    <div>
+    <div className="container">
       <h1>{article.title}</h1>
+      <p>By {article.author} | Published on {new Date(article.publishedAt).toLocaleDateString()}</p>
       <p>{article.content}</p>
-      {/* Display the summary if it's available */}
       {summary && (
-        <>
+        <div className="summary">
           <h2>Summary</h2>
           <p>{summary}</p>
-        </>
+        </div>
       )}
-      {/* Display error message if it's available */}
-      {error && <p>{error}</p>}
+      <a className="article-link" href={article.url} target="_blank" rel="noopener noreferrer">
+        Read the full article
+      </a>
+      {error && <p className="error">{error}</p>}
     </div>
   );
 };

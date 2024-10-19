@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
+import "../styles.css";
 
 const News = ({ fetchNewsBySearch }) => {
   const [articles, setArticles] = useState([]);
@@ -39,21 +40,20 @@ const News = ({ fetchNewsBySearch }) => {
   return (
     <div>
       <h1>Articles for: "{searchQuery}"</h1>
-      {articles.length > 0 ? (
-        <ul>
-          {articles.map((article, index) => (
-            <li key={index}>
-              <h2>{article.title}</h2>
-              <p>{article.content}</p>
-              {/* Pass article data using Link's state */}
-              <Link to={`/article/${index}`} state={{ article }}>
-                Read more
-              </Link>
-            </li>
-          ))}
-        </ul>
+      {articles.length === 0 ? (
+        <p>No articles found. Please try a different search.</p>
       ) : (
-        <p>No articles found for this search.</p>
+        articles.map((article, index) => (
+          <div key={index} className="news-article">
+            {article.urlToImage && (
+              <img src={article.urlToImage} alt={article.title} className="article-image" />
+            )}
+            <h2>{article.title}</h2>
+            <p>By {article.author || 'Unknown'} | Published on {new Date(article.publishedAt).toLocaleDateString()}</p>
+            <p>{article.description}</p>
+            <Link to={`/article/${index}`} state={{ article }}>Read more</Link>
+          </div>
+        ))
       )}
     </div>
   );
