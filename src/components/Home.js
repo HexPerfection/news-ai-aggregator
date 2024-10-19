@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Home = ({ fetchNewsBySearch }) => {
+const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
   const handleSearch = () => {
     if (searchQuery.trim() !== '') {
-      fetchNewsBySearch(searchQuery);
-      navigate('/articles'); // Redirect to articles page after fetching
+      navigate(`/articles?search=${searchQuery}`); // Redirect to articles page after fetching
       setSearchQuery(''); // Clear input after searching
     }
   };
