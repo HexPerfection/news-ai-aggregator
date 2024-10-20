@@ -1,3 +1,0 @@
-fix home ui
-add image to article
-fix npm start script to also start the bakcend server

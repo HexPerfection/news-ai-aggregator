@@ -43,6 +43,10 @@ const Article = () => {
 
   return (
     <div className="container">
+      {article.urlToImage && (
+        <img src={article.urlToImage} alt={article.title} className="article-image" />
+      )}
+
       <h1>{article.title}</h1>
       <p>By {article.author} | Published on {new Date(article.publishedAt).toLocaleDateString()}</p>
       <p>{article.content}</p>

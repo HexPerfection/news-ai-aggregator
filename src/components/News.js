@@ -38,23 +38,25 @@ const News = ({ fetchNewsBySearch }) => {
   }
 
   return (
-    <div>
+    <div className='news-container'>
       <h1>Articles for: "{searchQuery}"</h1>
+      <div className='articles-grid'>
       {articles.length === 0 ? (
-        <p>No articles found. Please try a different search.</p>
+        <p className='no-articles-message'>No articles found. Please try a different search.</p>
       ) : (
         articles.map((article, index) => (
-          <div key={index} className="news-article">
+          <div key={index} className="news-article-card">
             {article.urlToImage && (
-              <img src={article.urlToImage} alt={article.title} className="article-image" />
+              <img src={article.urlToImage} alt={article.title} className="news-article-image" />
             )}
-            <h2>{article.title}</h2>
-            <p>By {article.author || 'Unknown'} | Published on {new Date(article.publishedAt).toLocaleDateString()}</p>
-            <p>{article.description}</p>
+            <h2 className="news-article-title">{article.title}</h2>
+            <p className="news-article-info">By {article.author || 'Unknown'} | Published on {new Date(article.publishedAt).toLocaleDateString()}</p>
+            <p className="news-article-description">{article.description}</p>
             <Link to={`/article/${index}`} state={{ article }}>Read more</Link>
           </div>
         ))
       )}
+      </div>
     </div>
   );
 };

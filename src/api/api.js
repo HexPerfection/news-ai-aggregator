@@ -44,6 +44,18 @@ app.post('/api/summarize-article', async (req, res) => {
   }
 });
 
+app.post('/api/top-headlines', async (req, res) => {
+  try {
+    const response = await axios.get(
+      `https://newsapi.org/v2/top-headlines?country=us&apiKey=${NEWS_API_KEY}`
+    );
+    res.json({ articles: response.data.articles });
+  } catch (error) {
+    console.error('Error fetching top headlines:', error);
+    res.status(500).json({ message: 'Error fetching top headlines', error });
+  }
+});
+
 app.listen(5000, () => {
   console.log('Server running on port 5000');
 });
